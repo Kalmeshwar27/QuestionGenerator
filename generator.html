@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Question Creator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+      background: #f4f4f4;
+    }
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    label {
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+    input[type="text"], textarea, select {
+      width: 100%;
+      padding: 0.5rem;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      padding: 0.6rem 1.2rem;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-right: 1rem;
+      margin-top: 1rem;
+    }
+    pre {
+      background: #222;
+      color: #0f0;
+      padding: 1rem;
+      overflow-x: auto;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>🛠 Question Creator Tool</h2>
+
+  <div class="form-group">
+    <label for="questionText">Question Text</label>
+    <input type="text" id="questionText" />
+  </div>
+
+  <div class="form-group">
+    <label for="isTrueOrFalse">Is it True?</label>
+    <select id="isTrueOrFalse">
+      <option value="true">True</option>
+      <option value="false">False</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="explanation">Explanation</label>
+    <textarea id="explanation" rows="3"></textarea>
+  </div>
+
+  <div class="form-group">
+    <label for="readMoreLink">Read More Link</label>
+    <input type="text" id="readMoreLink" />
+  </div>
+
+  <button onclick="addQuestion()">Add Question</button>
+  <button onclick="downloadJSON()">Download JSON</button>
+
+  <h3>📦 Generated JSON</h3>
+  <pre id="output"></pre>
+
+  <script>
+    let questions = [];
+    let idCounter = 1;
+
+    function addQuestion() {
+      const qText = document.getElementById("questionText").value.trim();
+      const isTrue = document.getElementById("isTrueOrFalse").value === "true";
+      const explanation = document.getElementById("explanation").value.trim();
+      const link = document.getElementById("readMoreLink").value.trim();
+
+      if (!qText || !explanation || !link) {
+        alert("Please fill in all fields.");
+        return;
+      }
+
+      const newQuestion = {
+        id: idCounter++,
+        QuestionText: qText,
+        isTrueOrFalse: isTrue,
+        explanation: explanation,
+        readMoreLink: link,
+      };
+
+      questions.push(newQuestion);
+      document.getElementById("output").textContent = JSON.stringify(questions, null, 2);
+
+      // Reset fields
+      document.getElementById("questionText").value = "";
+      document.getElementById("explanation").value = "";
+      document.getElementById("readMoreLink").value = "";
+    }
+
+    function downloadJSON() {
+      const jsonStr = JSON.stringify(questions, null, 2);
+      const blob = new Blob([jsonStr], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "questions.json";
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+  </script>
+
+</body>
+</html>
